@@ -63,7 +63,7 @@ class AgeEstimator(object):
 
         detected = [r.rect for r in detector(input_img, 1)]
 
-        return self.get_age_from_faces(img, detected)
+        return zip([_trim_css_to_bounds(_rect_to_css(face), input_img.shape) for face in detected], self.get_age_from_faces(img, detected))
 
     def get_age_from_faces(self, input_img, bboxs):
 
@@ -90,4 +90,4 @@ class AgeEstimator(object):
                 outputs = F.softmax(self.model(inputs), dim=-1).cpu().numpy()
                 ages = np.arange(0, 101)
                 predicted_ages = (outputs * ages).sum(axis=-1)
-                return zip([_trim_css_to_bounds(_rect_to_css(face), input_img.shape) for face in bboxs], predicted_ages)
+                return predicted_ages
