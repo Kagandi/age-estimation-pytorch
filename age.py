@@ -104,4 +104,4 @@ def get_age(img_path, resume_path=None, margin=0.4):
             outputs = F.softmax(model(inputs), dim=-1).cpu().numpy()
             ages = np.arange(0, 101)
             predicted_ages = (outputs * ages).sum(axis=-1)
-            return zip([_trim_css_to_bounds(_rect_to_css(face.rect), img.shape) for face in detected], predicted_ages)
+            return zip([_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in detected], predicted_ages)
