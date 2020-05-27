@@ -14,7 +14,6 @@ from defaults import _C as cfg
 import face_recognition
 from face_recognition.api import _rect_to_css, _trim_css_to_bounds
 
-
 try:
     import face_recognition_models
 except Exception:
@@ -66,8 +65,7 @@ class AgeEstimator(object):
 
         return self.get_age_from_faces(img, detected)
 
-
-    def get_age_from_faces(self,input_img, bboxs):
+    def get_age_from_faces(self, input_img, bboxs):
 
         img_size = cfg.MODEL.IMG_SIZE
 
@@ -92,4 +90,4 @@ class AgeEstimator(object):
                 outputs = F.softmax(self.model(inputs), dim=-1).cpu().numpy()
                 ages = np.arange(0, 101)
                 predicted_ages = (outputs * ages).sum(axis=-1)
-                return zip([_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in bboxs], predicted_ages)
+                return zip([_trim_css_to_bounds(_rect_to_css(face), input_img.shape) for face in bboxs], predicted_ages)
