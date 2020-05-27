@@ -27,10 +27,10 @@ class AgeEstimator(object):
 
     def __init__(self, model_path=None, margin=0.4):
         cfg.freeze()
+        self.margin = margin
         self.model = get_model(model_name=cfg.MODEL.ARCH, pretrained=None)
         device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = self.model.to(device)
-
         model_path = Path(model_path)
 
         if model_path is None:
