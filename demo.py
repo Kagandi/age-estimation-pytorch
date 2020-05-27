@@ -140,7 +140,7 @@ def main():
             img_h, img_w, _ = np.shape(input_img)
 
             # detect faces using dlib detector
-            detected = detector(input_img, 1)
+            detected = [r.rect for r in detector(input_img, 1)]
             faces = np.empty((len(detected), img_size, img_size, 3))
 
             if len(detected) > 0:
