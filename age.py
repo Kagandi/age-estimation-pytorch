@@ -29,8 +29,8 @@ class AgeEstimator(object):
         cfg.freeze()
         self.margin = margin
         self.model = get_model(model_name=cfg.MODEL.ARCH, pretrained=None)
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = self.model.to(device)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = self.model.to(self.device)
         model_path = Path(model_path)
 
         if model_path is None:
@@ -50,7 +50,7 @@ class AgeEstimator(object):
         else:
             raise ValueError("=> no checkpoint found at '{}'".format(model_path))
 
-        if device == "cuda":
+        if self.device == "cuda":
             cudnn.benchmark = True
 
         self.model.eval()
@@ -88,7 +88,7 @@ class AgeEstimator(object):
                     faces[i] = cv2.resize(input_img[yw1:yw2 + 1, xw1:xw2 + 1], (img_size, img_size))
 
                 # predict ages
-                inputs = torch.from_numpy(np.transpose(faces.astype(np.float32), (0, 3, 1, 2))).to(device)
+                inputs = torch.from_numpy(np.transpose(faces.astype(np.float32), (0, 3, 1, 2))).to(self.device)
                 outputs = F.softmax(self.model(inputs), dim=-1).cpu().numpy()
                 ages = np.arange(0, 101)
                 predicted_ages = (outputs * ages).sum(axis=-1)
