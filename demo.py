@@ -14,6 +14,8 @@ import torch.utils.data
 import torch.nn.functional as F
 from model import get_model
 from defaults import _C as cfg
+import face_recognition
+
 try:
     import face_recognition_models
 except Exception:
@@ -73,12 +75,7 @@ def yield_images_from_dir(img_dir):
     img_dir = Path(img_dir)
 
     for img_path in img_dir.glob("*.*"):
-        img = cv2.imread(str(img_path), 1)
-
-        if img is not None:
-            h, w, _ = img.shape
-            r = 640 / max(w, h)
-            yield cv2.resize(img, (int(w * r), int(h * r))), img_path.name
+        yield face_recognition.load_image_file(img_path), img_path.name
 
 
 def main():
