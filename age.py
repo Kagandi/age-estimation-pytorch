@@ -12,6 +12,8 @@ import torch.nn.functional as F
 from model import get_model
 from defaults import _C as cfg
 import face_recognition
+from face_recognition.api import _rect_to_css, _trim_css_to_bounds
+
 
 try:
     import face_recognition_models
@@ -44,7 +46,7 @@ def get_age(img_path, resume_path=None, margin=0.4):
 
 
     # create model
-    print("=> creating model '{}'".format(cfg.MODEL.ARCH))
+    # print("=> creating model '{}'".format(cfg.MODEL.ARCH))
     model = get_model(model_name=cfg.MODEL.ARCH, pretrained=None)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = model.to(device)
@@ -102,5 +104,4 @@ def get_age(img_path, resume_path=None, margin=0.4):
             outputs = F.softmax(model(inputs), dim=-1).cpu().numpy()
             ages = np.arange(0, 101)
             predicted_ages = (outputs * ages).sum(axis=-1)
-
-            return zip(faces, predicted_ages)
+            return zip([_trim_css_to_bounds(_rect_to_css(face.rect), img.shape) for face in detected], predicted_ages)
