@@ -75,7 +75,10 @@ def yield_images_from_dir(img_dir):
     img_dir = Path(img_dir)
 
     for img_path in img_dir.glob("*.*"):
-        yield face_recognition.load_image_file(img_path), img_path.name
+        try:
+            yield face_recognition.load_image_file(img_path), img_path.name
+        except:
+            pass
 
 
 def main():
